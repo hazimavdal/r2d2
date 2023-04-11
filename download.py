@@ -32,13 +32,10 @@ class Config(avdal.config.Base):
     zoom_client_secret: str = avdal.config.Field()
 
 
-auth = readj("auth.json")
-
-
-client = ZoomClient(".config",
-                    auth["account_id"],
-                    auth["client_id"],
-                    auth["client_secret"])
+client = ZoomClient(os.path.join(Config.r2d2_path, ".config"),
+                    Config.account_id,
+                    Config.zoom_client_id,
+                    Config.zoom_client_secret)
 
 rec = client.meeting_recordings("86078512479")
 for file in rec["recording_files"]:
