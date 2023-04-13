@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 
-def parse_datetime(datetime_string):
+def parse_datetime(datetime_string) -> datetime:
     return datetime.strptime(datetime_string, '%Y-%m-%dT%H:%M:%SZ')
 
 

@@ -2,8 +2,12 @@
 
 from zoom import ZoomClient
 from logger import get_logger
+from lib import parse_datetime, make_parents
+
 import os
+import csv
 import json
+import argparse
 import requests
 
 import avdal.env
@@ -30,20 +34,47 @@ class Config(avdal.config.Base):
     download_extensions: str = avdal.config.Field(cast=ext_mapper)
     zoom_client_id: str = avdal.config.Field()
     zoom_client_secret: str = avdal.config.Field()
-
+    noop: bool = avdal.config.Field(cast=bool, default=False)
 
 client = ZoomClient(os.path.join(Config.r2d2_path, ".config"),
                     Config.account_id,
                     Config.zoom_client_id,
                     Config.zoom_client_secret)
 
-rec = client.meeting_recordings("86078512479")
-for file in rec["recording_files"]:
-    url = file["download_url"]
-    ext = file["file_extension"].lower().strip()
-    typ = file["recording_type"]
 
-    if ext not in Config.download_extensions:
-        continue
+def download_meeting(dest, meeting_id):
+    meeting = client.meeting_recordings(meeting_id)
+    manifest = {
+        "topic": meeting["topic"],
+        "start_time": meeting["start_time"]
+    }
+    logger.info(f"Downloading '{meeting['topic']}'")
+    for file in meeting["recording_files"]:
+        url = file["download_url"]
+        ext = file["file_extension"].lower().strip()
+        typ = file["recording_type"]
+        start = file["recording_start"]
 
-    client.download(url, f"{typ}.{ext}")
+        if ext not in Config.download_extensions:
+            continue
+
+        timestamp = parse_datetime(start).strftime("%Y-%m-%d")
+        out_file = os.path.join(dest, timestamp, f"{typ}.{ext}")
+        make_parents(out_file)
+
+        if not Config.noop:
+            client.download(url, out_file)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("config_file")
+
+    args = parser.parse_args()
+
+    with open(args.config_file) as f:
+        rows = csv.DictReader(f)
+        for row in rows:
+            class_dir = os.path.join(Config.r2d2_path, row["class_code"].strip().replace(" ", "").lower())
+            download_meeting(class_dir, row["meeting_id"])

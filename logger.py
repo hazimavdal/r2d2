@@ -12,7 +12,7 @@ def get_logger(filename):
     filename = os.path.join(base, f"{name}_{sign}{ext}")
 
     class WrappedLogger(logging.Logger):
-        def __init__(self, name, level=logging.NOTSET):
+        def __init__(self, name, level=logging.INFO):
             self._error_count = 0
             super(WrappedLogger, self).__init__(name, level)
 
@@ -28,7 +28,8 @@ def get_logger(filename):
 
     make_parents(filename)
 
-    log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(filename)s:%(lineno)d - %(message)s')
+    # log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(filename)s:%(lineno)d - %(message)s')
+    log_formatter = logging.Formatter('[%(levelname)s] %(message)s')
 
     logger = logging.getLogger("r2d2")
 
