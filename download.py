@@ -77,5 +77,10 @@ if __name__ == "__main__":
     with open(args.config_file) as f:
         rows = csv.DictReader(f)
         for row in rows:
-            class_dir = os.path.join(Config.r2d2_path, row["Class Code"].strip().replace(" ", "").lower())
-            download_meeting(class_dir, row["Meeting ID"])
+            code = row["Class Code"].strip().replace(" ", "").lower()
+            meeting_id = row["Meeting ID"].strip()
+            if len(code) == 0 or len(meeting_id) == 0:
+                continue
+
+            class_dir = os.path.join(Config.r2d2_path, code)
+            download_meeting(class_dir, meeting_id)
