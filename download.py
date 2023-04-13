@@ -45,6 +45,7 @@ client = ZoomClient(os.path.join(Config.r2d2_path, ".config"),
 def download_meeting(dest, meeting_id):
     meeting = client.meeting_recordings(meeting_id)
     manifest = {
+        "meeting_id": meeting_id,
         "topic": meeting["topic"],
         "start_time": meeting["start_time"]
     }
@@ -76,5 +77,5 @@ if __name__ == "__main__":
     with open(args.config_file) as f:
         rows = csv.DictReader(f)
         for row in rows:
-            class_dir = os.path.join(Config.r2d2_path, row["class_code"].strip().replace(" ", "").lower())
-            download_meeting(class_dir, row["meeting_id"])
+            class_dir = os.path.join(Config.r2d2_path, row["Class Code"].strip().replace(" ", "").lower())
+            download_meeting(class_dir, row["Meeting ID"])
