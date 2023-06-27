@@ -16,7 +16,10 @@ import avdal.config
 logger = get_logger(".log")
 
 appname = "R2D2"
-environ = avdal.env.Environment(os.environ, prefix=appname).union(avdal.env.DotEnv(".env", prefix=appname))
+
+env = avdal.env.DotEnv(".env", prefix=appname)
+print(env)
+environ = avdal.env.Environment(os.environ, prefix=appname).union(env)
 
 
 def ext_mapper(raw: str) -> list:
