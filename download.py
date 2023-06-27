@@ -19,9 +19,7 @@ logger = get_logger(".log")
 
 appname = "R2D2"
 
-env = avdal.env.DotEnv(".env", prefix=appname)
-print(env)
-environ = avdal.env.Environment(os.environ, prefix=appname).union(env)
+environ = avdal.env.Environment(os.environ, prefix=appname).union(avdal.env.DotEnv(".env", prefix=appname))
 
 
 def ext_mapper(raw: str) -> list:
@@ -40,6 +38,7 @@ class Config(avdal.config.Base):
     zoom_client_id: str = avdal.config.Field()
     zoom_client_secret: str = avdal.config.Field()
     noop: bool = avdal.config.Field(cast=bool, default=False)
+
 
 client = ZoomClient(os.path.join(Config.r2d2_path, ".config"),
                     Config.account_id,
