@@ -83,7 +83,7 @@ if __name__ == "__main__":
         rows = csv.DictReader(f)
         for row in rows:
             code = row["Class Code"].strip().replace(" ", "").lower()
-            meeting_id = row["Meeting ID"].strip()
+            meeting_id = row["Meeting ID"].strip().replace(" ", "")
             if len(code) == 0 or len(meeting_id) == 0:
                 continue
 
