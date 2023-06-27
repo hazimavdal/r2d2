@@ -40,7 +40,9 @@ class Config(avdal.config.Base):
     noop: bool = avdal.config.Field(cast=bool, default=False)
 
 
-client = ZoomClient(os.path.join(Config.r2d2_path, ".config"),
+config_root = os.path.join(Config.r2d2_path, ".config")
+make_parents(config_root, dir=True)
+client = ZoomClient(config_root,
                     Config.account_id,
                     Config.zoom_client_id,
                     Config.zoom_client_secret)
